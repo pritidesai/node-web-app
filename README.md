@@ -1,3 +1,5 @@
+*(This repo is a fork of https://github.com/ibm-cloud-architecture/node-web-app, all the credits goes to [Roland Barcia](https://medium.com/ibm-garage/fun-with-gitops-stitching-kubernetes-tekton-and-argo-ee348afd0b08) and the team at the IBM Gragage.)*
+
 # GitOps with Tekton and ArgoCD
 ## Simple Node JS App Soup to Nuts: From DeskTop Docker to OpenShift Cluster
 
