@@ -13,7 +13,7 @@ This git repo is a simple contains a simple node applicaiton that uses argocd to
 The Node Application is created following this tutorial simulating how a new user might learn to containerize a Node App.
 [Dockerizing a Node.js web app](https://nodejs.org/fr/docs/guides/nodejs-docker-webapp/)
 
-1. To run the applicaiton locally, [Install Docker Desktop](https://www.docker.com/products/docker-desktop).
+1. To run the application locally, [Install Docker Desktop](https://www.docker.com/products/docker-desktop).
 
 2. You can run the app locally if you have [node](https://nodejs.org/en/) installed
 
