@@ -7,68 +7,46 @@ This git repo is a simple contains a simple node applicaiton that uses argocd to
 
 ![alt argo-flow-1](images/TektonArgoOpenShift.png)
 
-### Create a Fork of this Repo for your own fun.
 
+### Run Node App and Test Locally with Docker
 
-1. Since you are running a GitOps Example, you want to create a fork of this repo into your own git-repo
-
-    ![alt fork-repo](images/fork-repo.png)
-
-2. Select your user 
-
-    ![alt fork-repo-2](images/fork-repo-2.png)
-
-3. You want to create a Clone of your new repo
-```console
- git clone https://github.com/<your-user>/node_web_app.git
-
- cd node_web_app
-```
-
-### Run Node App and Test Locally with Docker or Podman 
-
-The Node Applicaiton is created following this tutorial simulating how a new user might learn to containerize a Node App.  
+The Node Application is created following this tutorial simulating how a new user might learn to containerize a Node App.
 [Dockerizing a Node.js web app](https://nodejs.org/fr/docs/guides/nodejs-docker-webapp/)
 
-1. To run the applicaiton locally, [Install Docker Desktop](https://www.docker.com/products/docker-desktop) or you could use [podman](https://podman.io/) on Linux (This assumes you use podman CLI instead of docker.  Substitute docker <command> with podman <command>)
+1. To run the applicaiton locally, [Install Docker Desktop](https://www.docker.com/products/docker-desktop).
 
 2. You can run the app locally if you have [node](https://nodejs.org/en/) installed
 
-```
-npm install 
+```shell
+cd node-web-app/
+npm install
 node server.js
-
 ```
 
+3. Since you have the code, docker build with a tag
 
-
-3. Since you have the code, docker build
-
-
-
-```
+```shell
 docker build -t <your username>/node-web-app .
 ```
-If you want to use podman locally, follow directions [here](https://developers.redhat.com/blog/2019/09/13/develop-with-node-js-in-a-container-on-red-hat-enterprise-linux/) to build with buildah.
 
+4. Run the application in a container.
 
-4. Run the applicaiton in a container.
-```
-docker run -p 49160:8080 -d <your username>/node-web-app
-
+```shell
+docker run -p 49162:8082 -d <your username>/node-web-app
 ```
 
 5. Check that the container is running.
-```
+
+```shell
 docker ps
 ```
 
 6. Test the Application 
 
+```shell
+curl -i localhost:49162
 ```
-curl -i localhost:49160
 
-```
 ### Change Pipeline Resource to your git repo.
 
 This change is required to run a build from the console without a Trigger Event.  
