@@ -6,7 +6,7 @@ metadata:
 spec:
   params:
     - name: url
-      value: 'https://github.com/ibm-cloud-architecture/node-web-app.git'
+      value: 'https://github.com/pritidesai/node-web-app.git'
     - name: revision
       value: master
   type: git

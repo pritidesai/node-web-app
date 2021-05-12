@@ -82,6 +82,54 @@ Your ID should use an ID with admin access since you will be installing a set of
 
 You can also log into your OpenShift web console.  
 
+### Install ArgoCD
+
+Install ArgoCD
+
+```shell
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+```
+
+Download ArgoCD CLI
+
+```shell
+brew install argocd
+```
+
+Change the argocd-server service type to LoadBalancer:
+
+```shell
+kubectl patch svc argocd-server -n argocd -p '{"spec": {"type": "LoadBalancer"}}'
+```
+
+Kubectl port-forwarding can also be used to connect to the API server without exposing the service.
+
+```shell
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+```
+
+The API server can then be accessed using the http://localhost:8080
+
+Login Using the CLI, using the username `admin` and the password from below:
+
+```shell
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+```
+
+Change the password using the command:
+
+```shell
+argocd login localhost:8080
+argocd account update-password
+```
+
+Register a cluster `docker-desktop` to deploy apps to
+
+```shell
+argocd cluster add docker-desktop
+```
+
 
 ### Install ArgoCD Operator into OpenShift 
 
@@ -98,6 +146,14 @@ For this tutorial I follwed the instructions to install the [OpenShift Pipeline 
 ### Install the Argo CD Tekton Task into the argocd namespace
 
 After tekton builds the application and pushed the container image into the Image Repository, tekton needs to trigger a new OpenShift Deployment.  There is a special task that allows Tekton to trigger a argocd sync.  You have to install the [Argo CD Tekton Task](https://github.com/tektoncd/catalog/tree/v1beta1/argocd)
+
+https://github.com/tektoncd/catalog/tree/main/task/argocd-task-sync-and-wait/0.1
+
+```shell
+kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/argocd-task-sync-and-wait/0.1/argocd-task-sync-and-wait.yaml
+
+```
+
 
 ### Create OCP Project 
 You need to create an OpenShift project called node-web-project or you will need to change all namespaces in the YAML File to match your project 
