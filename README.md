@@ -136,6 +136,13 @@ argocd cluster add docker-desktop
 kubectl apply -f https://storage.googleapis.com/tekton-releases/pipeline/previous/v0.24.1/release.yaml
 ```
 
+### Install Tekton Triggers
+
+```shell
+kubectl apply -f https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml
+kubectl apply -f https://storage.googleapis.com/tekton-releases/triggers/latest/interceptors.yaml
+```
+
 ### Install the Argo CD Tekton Task into the argocd namespace
 
 After tekton builds the application and pushes the container image into the Image Repository, tekton needs to trigger a new OpenShift Deployment.  There is a special task that allows Tekton to trigger a argocd sync.  You have to install the [Argo CD Tekton Task](https://github.com/tektoncd/catalog/tree/main/task/argocd-task-sync-and-wait/0.1).
