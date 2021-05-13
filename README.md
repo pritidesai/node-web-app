@@ -130,27 +130,19 @@ Register a cluster `docker-desktop` to deploy apps to
 argocd cluster add docker-desktop
 ```
 
+### Install Tekton Pipelines
 
-### Install ArgoCD Operator into OpenShift 
-
-There are a few ways to install argocd into a Kubernetes Cluster.  We used the Argo CD Operator.  
-
-For this tutorial, I used [the Console Install](https://argocd-operator.readthedocs.io/en/latest/install/openshift/) using the Argo CD Operator on OpenShift.  
-
-### Install OpenShift Pipeline Operator 
-
-OpenShift delivers a preview of tekton through the OpenShift Pipeline Operator.  We used the OpenShift Pipeline Operator.  
-
-For this tutorial I follwed the instructions to install the [OpenShift Pipeline Operator](https://openshift.github.io/pipelines-docs/docs/0.10.5/assembly_installing-pipelines.html).
+```shell
+kubectl apply -f https://storage.googleapis.com/tekton-releases/pipeline/previous/v0.24.1/release.yaml
+```
 
 ### Install the Argo CD Tekton Task into the argocd namespace
 
-After tekton builds the application and pushed the container image into the Image Repository, tekton needs to trigger a new OpenShift Deployment.  There is a special task that allows Tekton to trigger a argocd sync.  You have to install the [Argo CD Tekton Task](https://github.com/tektoncd/catalog/tree/v1beta1/argocd)
+After tekton builds the application and pushes the container image into the Image Repository, tekton needs to trigger a new OpenShift Deployment.  There is a special task that allows Tekton to trigger a argocd sync.  You have to install the [Argo CD Tekton Task](https://github.com/tektoncd/catalog/tree/main/task/argocd-task-sync-and-wait/0.1).
 
-https://github.com/tektoncd/catalog/tree/main/task/argocd-task-sync-and-wait/0.1
 
 ```shell
-kubectl apply -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/argocd-task-sync-and-wait/0.1/argocd-task-sync-and-wait.yaml
+kubectl apply -n argocd -f https://raw.githubusercontent.com/tektoncd/catalog/main/task/argocd-task-sync-and-wait/0.1/argocd-task-sync-and-wait.yaml
 
 ```
 
@@ -171,51 +163,50 @@ oc policy add-role-to-user registry-editor builder
 oc policy add-role-to-user registry-editor deployer
 ```
 
-### Update argocd secret.
+### Update ArgoCD secret
 
 ![alt argo-secret](images/argosecret.png)
 
-There is a file caled node-web-app-argocdsecret.template.  Create a copy of that file as yaml.
+There is a file called `node-web-app-argocdsecret.template` which contains
+* `argocd-env-configmap`: `ConfigMap` with `ARGOCD_SERVER` used for server address
+* `argocd-env-secret`: `Secret` with `ARGOCD_USER` and `ARGOCD_PASSWORD` used for authentication
 
-```
-cd pipeline
+Create a copy of that file as yaml.
+
+```shell
+cd pipeline/
 cp node-web-app-argocdsecret.template  node-web-app-argocdsecret.yaml
 ```
-CAUTION !!!!! the .gitigonore file contains the name of this yaml file to avoid checkin of your credentials.  If you use another name, then you must make sure you DO NOT CHECKIN credentials.  
 
-![alt git-ignore](images/gitignore.png)
+In the newly created file, replace the value for `ARGOCD_SERVER` (`localhost:8080`) to your server.  Either enter your `ARGOCD_AUTH_TOKEN` or User and Password Base 64 encoded.
 
-In the newly created file, replace the value for ARGOCD_SERVER to your server.  Either enter your ARGOCD_AUTH_TOKEN or User and Password Base 64 encoded.  
+### Examine Tekton Pipeline YAML
 
-![alt argo-secret](images/argosecret.png)
+* [node-web-app-pipeline-resources.yaml](pipeline/node-web-app-pipeline-resources.yaml): [Pipeline Resources](https://github.com/tektoncd/pipeline/blob/main/docs/resources.md) are configured for the pipeline. We will create two resources (`git` and `image`), which will need the name of the git repository, and the name of the Container Image using the Docker Hub.  Note, the resources here allow us to run a Pipeline from the Tekton Dashboard or CLI. It hard codes default values. They will be overridden by Trigger Template when builds are done via a git push.
 
-### Examime Pipeline YAML
 
-Examine the Tekton Files.  A Quick summary of Tekton Resources can be read [here](https://openshift.github.io/pipelines-docs/docs/0.10.5/con_pipelines-concepts.html).  You already saw one of the YAML files to configure the secret. 
+* [node-web-app-pipeline.yaml](pipeline/node-web-app-pipeline.yaml): Our [Pipeline](https://github.com/tektoncd/pipeline/blob/main/docs/pipelines.md) for building, publishing, and deploying our application. There are two [Tasks](https://github.com/tektoncd/pipeline/blob/main/docs/tasks.md).  We make use of the shared tasks rather than creating our own. Tasks:
 
-[node-web-app-pipeline-resources.yaml](pipeline/node-web-app-pipeline-resources.yaml): [Pipeline Resources](https://github.com/tektoncd/pipeline/blob/master/docs/resources.md) configured for the pipeline.  There are 2, the name of the git repository and the name of the Container Image using the Internal Red Hat Registry.  Note, the resources here allow us to do a Pipeline Run fomr the console or oc commandline.  It hard codes default values.  They will be overridden by Trigger Template when builds are done via a git push.  
+   - the `build-and-publish-image` uses the ClusterTask buildah (podman build system).
+   - `argocd-sync-deployment` uses the ArgoCD task we installed earlier
 
-[node-web-app-pipeline.yaml](pipeline/node-web-app-pipeline.yaml): Our [Pipeline](https://github.com/tektoncd/pipeline/blob/master/docs/pipelines.md) for building, publishng, and deploying our Node App.  There are 2 [Tasks](https://github.com/tektoncd/pipeline/blob/master/docs/tasks.md).  We make use of some default tasks rather than creating our own.  A real life pipeline will execute tests, tag images, and so forth.  Tasks:
 
-- the build-and-publish-image uses the ClusterTask buildah (podman build system).  
-- argocd-sync-deployment uses the argocd Task we installed earlier
+* [node-web-app-triggertemplate.yaml](pipeline/node-web-app-triggertemplate.yaml):  Now that the pipeline is setup, there are several resources created in this file.  They create the needed resources for triggering builds from an external source, in our case a Git webhook.  [You can learn more about Tekton Triggers here](https://github.com/tektoncd/triggers).  We have created the following.
 
-[node-web-app-triggertemplate.yaml](pipeline/node-web-app-triggertemplate.yaml):  Now that the pipeline is setup, there are several resources created in this file.  They create the needed resources for triggering builds from an external source, in our case a Git webhook.  [You can learn more about Tekton Triggers here](https://github.com/tektoncd/triggers).  We have created the following.  
+   - A TriggerTemplate is used to create a template of the same pipeline resources, but dynamically genertaed to not hard code image name or source.  It also creates a PipelineRun Template that will be created when a build is triggered.
 
-- A TriggerTemplate is used to create a template of the same pipeline resources, but dynamically genertaed to not hard code image name or source.  It also creates a PipelineRun Template that will be created when a build is triggered. 
+   - A TriggerBinding that binds the incoming event data to the template (this will populate things like git repo name, revision,etc....)
 
-- A TriggerBining that binds the incoming event data to the template (this will populte things like git repo name, revision,etc....)
+   - An EventListener that will create a pod application bringing together a binding and a template.
 
-- An EventListener that will create a pod application bringing together a binding and a template.  
+   - An OpenShift Route to expose the Event Listener.  Your will create a GIT Webhook that will callback this Route.
 
-- An OpenShift Route to expose the Event Listener.  Your will create a GIT Webhook that will callback this Route.  
-
-You can learn about [Tekton Resources](https://github.com/tektoncd/pipeline/tree/master/docs#learn-more) and [OpenShift Pipleines](https://openshift.github.io/pipelines-docs/docs/0.10.5/con_pipelines-concepts.html)
+You can learn about [Tekton Resources](https://github.com/tektoncd/pipeline/tree/main/docs#learn-more) and [OpenShift Pipleines](https://openshift.github.io/pipelines-docs/docs/0.10.5/con_pipelines-concepts.html)
 
 
 ### Create and configure ArgoCD App for Tekton Resources 
 
-We can use argocd to deploy the tekton build for the app.  IN a real project, having your pipeline in a separate repo might be better.  [You can create an argo cd app via the GUI or commandline](https://argoproj.github.io/argo-cd/getting_started/).   
+We can use ArgoCD to deploy the Tekton build for the app.  IN a real project, having your pipeline in a separate repo might be better.  [You can create an argo cd app via the GUI or commandline](https://argoproj.github.io/argo-cd/getting_started/).
 
 The screenshot below shows the parameters I entered.  You need to use your own forked git repo.  
 
