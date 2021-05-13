@@ -219,7 +219,7 @@ The screenshot below shows the parameters I entered.  You need to use your own f
 - PATH: pipeline
 - AutoSync Enabled.  
 
-Once you run sync, your pipeline should be deployed and your screen in argo should look like below.  
+Once you run sync, your pipeline should be deployed, and your screen in ArgoCD should look like below.  
 
 ![alt argo-pipeline](images/argocd-tekton-pipeline.png)
 
@@ -231,7 +231,7 @@ At this point you can run a build.  The Build Should succeed, but the deploy sho
 
 ![alt kickoff](images/kickoffbuild.png)
 
-2. You will see that the values are prepopulated with default PipelineResources as shown below.  
+2. You will see that the values are prepopulated with default PipelineResources as shown below.
 
 
 ![alt default-resources](images/PipelineDefaultResouces.png)
