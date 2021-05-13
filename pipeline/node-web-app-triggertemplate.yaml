@@ -31,7 +31,7 @@ spec:
     spec:
       params:
       - name: url
-        value: 'docker.io/pritidesai/cdcon-hello-app:latest'
+        value: 'docker.io/pritidesai/web-node-app:latest'
       type: image
   - apiVersion: tekton.dev/v1alpha1
     kind: PipelineRun
