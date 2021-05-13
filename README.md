@@ -181,6 +181,7 @@ oc policy add-role-to-user registry-editor deployer
 ![alt argo-secret](images/argosecret.png)
 
 There is a file called `node-web-app-argocdsecret.template` which contains
+
 * `argocd-env-configmap`: `ConfigMap` with `ARGOCD_SERVER` used for server address
 * `argocd-env-secret`: `Secret` with `ARGOCD_USER` and `ARGOCD_PASSWORD` used for authentication
 
@@ -192,6 +193,22 @@ cp node-web-app-argocdsecret.template  node-web-app-argocdsecret.yaml
 ```
 
 In the newly created file, replace the value for `ARGOCD_SERVER` (`localhost:8080`) to your server.  Either enter your `ARGOCD_AUTH_TOKEN` or User and Password Base 64 encoded.
+
+### Update ServiceAccount secret
+
+There is a file called `node-web-app-serviceaccount.template` which contains
+
+* `dockerhub-user-pass`: `Secret` with `${DOCKER_USERNAME}` and `${DOCKER_PASSWORD}` used for authentication
+* `cdcon-app-builder`: `ServiceAccount` using the secret `dockerhub-user-pass`
+
+Create a copy of that file as yaml.
+
+```shell
+cd pipeline/
+cp node-web-app-serviceaccount.template  node-web-app-serviceaccount.yaml
+```
+
+In the newly created file, replace the value for `DOCKER_USERNAME` and `DOCKER_PASSWORD` with your docker credentials.
 
 ### Examine Tekton Pipeline YAML
 

@@ -48,7 +48,7 @@ spec:
       - name: node-web-app-image
         resourceRef:
           name: node-web-app-image-$(uid)
-      serviceAccountName: pipeline
+      serviceAccountName: cdcon-app-builder
 ---
 
 apiVersion: triggers.tekton.dev/v1alpha1
@@ -70,7 +70,7 @@ kind: EventListener
 metadata:
   name: node-web-app-el
 spec:
-  serviceAccountName: pipeline
+  serviceAccountName: cdcon-app-builder
   triggers:
     - name: node-web-app
       bindings:
