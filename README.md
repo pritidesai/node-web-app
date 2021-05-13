@@ -238,6 +238,9 @@ You can learn about [Tekton Resources](https://github.com/tektoncd/pipeline/tree
 
 We can use ArgoCD to deploy the Tekton build for the app.  IN a real project, having your pipeline in a separate repo might be better.  [You can create an argo cd app via the GUI or commandline](https://argoproj.github.io/argo-cd/getting_started/).
 
+```shell
+argocd app create node-web-app-project --repo https://github.com/pritidesai/node-web-app --path pipeline --dest-name docker-desktop --dest-namespace node-web-project
+```
 The screenshot below shows the parameters I entered.  You need to use your own forked git repo.  
 
 ![alt argo-pipeline](images/argo-node-web-pipeline.png) 
@@ -255,7 +258,7 @@ Once you run sync, your pipeline should be deployed, and your screen in ArgoCD s
 
 ### Run a Build
 
-At this point you can run a build.  The Build Should succeed, but the deploy should fail.  If you configure the deployment first however, deloyment will fail to start because the image has not been published.  
+At this point you can run a build.  The Build Should succeed, but the deploy should fail.  If you configure the deployment first however, deployment will fail to start because the image has not been published.
 
 1. You can go into the Pipelines section of the OpenShift Console, right click the pipeline and click Start.
 

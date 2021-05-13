@@ -1,0 +1,8 @@
+project: default
+source:
+  repoURL: 'https://github.com/pritidesai/node-web-app'
+  path: pipeline
+destination:
+  namespace: node-web-project
+  name: docker-desktop
+
