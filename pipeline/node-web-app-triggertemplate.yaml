@@ -1,4 +1,4 @@
-apiVersion: tekton.dev/v1alpha1
+apiVersion: triggers.tekton.dev/v1alpha1
 kind: TriggerTemplate
 metadata:
   name: node-web-app-tt
@@ -31,7 +31,7 @@ spec:
     spec:
       params:
       - name: url
-        value: 'image-registry.openshift-image-registry.svc:5000/node-web-project/web-node-app:latest'
+        value: 'docker.io/pritidesai/cdcon-hello-app:latest'
       type: image
   - apiVersion: tekton.dev/v1alpha1
     kind: PipelineRun
@@ -49,11 +49,9 @@ spec:
         resourceRef:
           name: node-web-app-image-$(uid)
       serviceAccountName: pipeline
+---
 
-
---- 
-
-apiVersion: tekton.dev/v1alpha1
+apiVersion: triggers.tekton.dev/v1alpha1
 kind: TriggerBinding
 metadata:
   name: node-web-app-tb
@@ -65,10 +63,9 @@ spec:
     value: $(body.head_commit.id)
   - name: git-repo-name
     value: $(body.repository.name)
-
 ---
 
-apiVersion: tekton.dev/v1alpha1
+apiVersion: triggers.tekton.dev/v1alpha1
 kind: EventListener
 metadata:
   name: node-web-app-el
@@ -79,17 +76,16 @@ spec:
     - name: node-web-app-tb
     template:
       name: node-web-app-tt
-
 ---
 
-apiVersion: route.openshift.io/v1
-kind: Route
-metadata:
-  name: el-node-web-app
-  namespace: node-web-project
-spec:
-  host: el-node-web-app.apps.roly-ocp43-cluster.roly-ocp.com
-  to:
-    kind: Service
-    name: el-node-web-app-el
-    weight: 100
+#apiVersion: route.openshift.io/v1
+#kind: Route
+#metadata:
+#  name: el-node-web-app
+#  namespace: node-web-project
+#spec:
+#  host: el-node-web-app.apps.roly-ocp43-cluster.roly-ocp.com
+#  to:
+#    kind: Service
+#    name: el-node-web-app-el
+#    weight: 100
