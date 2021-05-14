@@ -328,7 +328,7 @@ You will now need to configure 2 WebHooks.
 
 ![alt webhooks](images/webhooks.png)
 
-1. One WebHook will be configured to our argocd pipeline app.  This will enabled you to push changes to your pipeline plus for argocd to detect changes for your app (though autosync is not on)
+1. One WebHook will be configured to our argocd pipeline app.  This will enable us to push changes to our pipeline plus for argocd to detect changes for our app (though autosync is not on)
 
     ![alt webhooks](images/argowebhook.png)
 
@@ -336,6 +336,10 @@ You will now need to configure 2 WebHooks.
 2. One webhook will go to your Tekton Event Listener to start a tekton build from git push
 
     ![alt webhooks](images/tekton-webhook.png)
+
+```shell
+kubectl get eventlistener -n node-web-project
+```
 
 ### Make a code change and commit, look at build.   
 
@@ -348,7 +352,7 @@ You will now need to configure 2 WebHooks.
 2. Make a change to the Node JS Code.  
 
 
-    ![alt webhooks](images/changecode.png)
+![alt webhooks](images/changecode.png)
 
 3. Push the changes to your repo
 
@@ -363,7 +367,7 @@ git push
     In a real deployment, you might have many webhooks.  git push can be build to dev while a git tag can be a build for test.  
 
 
-3. Go to the OpenShift Console and you should see a pipleine run kickoff.  Wait till it is complete.  Notice the name of the pipleine run matches that in the tigger template.
+3. Go to the OpenShift Console and you should see a pipleine run kickoff.  Wait till it is complete.  Notice the name of the pipleine run matches that in the trigger template.
 
     ![alt webhooks](images/gittrigger.png)
 
@@ -394,9 +398,9 @@ This completes loading the solution.
 
 #### Troubleshooting
 
-- argocd runs in an argocd namespace.  Yourtekton pipleine runs in your app namespace.  
+- argocd runs in an argocd namespace.  Your tekton pipleine runs in your app namespace.  
 
-- using tkn log <resource> intance to see tekton activity
+- using tkn log <resource> instance to see tekton activity
 
 - oc logs <resource> for various pods
 
