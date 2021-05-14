@@ -57,3 +57,4 @@ spec:
             args:
               - --dockerfile=$(resources.inputs.source.path)/$(params.DOCKERFILE)
               - --destination=$(resources.outputs.image.url)
+              - --context=dir://$(resources.inputs.source.path)/
