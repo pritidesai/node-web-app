@@ -255,16 +255,6 @@ We can use ArgoCD to deploy the Tekton build for the app.  IN a real project, ha
 ```shell
 argocd app create node-web-app-project --repo https://github.com/pritidesai/node-web-app --path pipeline --dest-name docker-desktop --dest-namespace node-web-project
 ```
-The screenshot below shows the parameters I entered.  You need to use your own forked git repo.  
-
-![alt argo-pipeline](images/argo-node-web-pipeline.png) 
-
-- Project: default
-- cluster: (URL Of your OpenShift Cluster)
-- namespace should be the name of your OpenShift Project
-- Targer Revision: Head
-- PATH: pipeline
-- AutoSync Enabled.  
 
 Once you run sync, your pipeline should be deployed, and your screen in ArgoCD should look like below.  
 
@@ -274,11 +264,11 @@ Once you run sync, your pipeline should be deployed, and your screen in ArgoCD s
 
 At this point you can run a build. The Build Should succeed, but the deploy should fail.  If you configure the deployment first however, deployment will fail to start because the image has not been published.
 
-1. You can go into the Pipelines section of the OpenShift Console, right click the pipeline and click Start.
+1. You can go into the PipelineRuns section of the Tekton Dashboard and click Create.
 
 ![alt kickoff](images/kickoffbuild.png)
 
-2. You will see that the values are prepopulated with default PipelineResources as shown below.
+2. Select the `Pipeline`, `PipelineResources`, and `ServiceAccount`.
 
 
 ![alt default-resources](images/PipelineDefaultResouces.png)
@@ -399,13 +389,13 @@ git push
 5. Go back to the Pipeline Runs and check that the build is complete.  
 
 
-    ![alt success](images/pipelinesuccess.png)
+![alt success](images/pipelinesuccess.png)
 
 
 6. Go to the Topology view on the Developer Side and launch the app as shown.
 
 
-    ![alt success](images/LaunchApp.png)
+![alt success](images/LaunchApp.png)
 
 
 7.  If it all works out, your app should look like this

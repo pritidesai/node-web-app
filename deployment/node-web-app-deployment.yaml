@@ -1,25 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: node-web-app-deployment
+  name: node-web-app
   namespace: node-web-project
+  labels:
+    app: node-web-app
 spec:
   selector:
     matchLabels:
       app: node-web-app
-  replicas: 3
+  replicas: 1
   template:
     metadata:
       labels:
         app: node-web-app
-        version: 1.1.9
     spec:
       containers:
       - name: node-web-app
-        image: image-registry.openshift-image-registry.svc:5000/node-web-project/web-node-app:latest
-        imagePullPolicy: Always
-        envFrom:
-        - configMapRef:
-            name: node-web-app-config
+        image: docker.io/pritidesai/web-node-app:latest
         ports:
         - containerPort: 8080

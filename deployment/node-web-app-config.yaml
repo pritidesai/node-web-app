@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: node-web-app-config
-  namespace: node-web-project
-data:
-  VERSION: "1.1.9"
-  HOST: "0.0.0.0"
-  PORT: "8080"
