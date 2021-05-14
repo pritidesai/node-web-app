@@ -42,11 +42,18 @@ spec:
           - name: DOCKERFILE
             type: string
             default: ./Dockerfile
+        resources:
+          inputs:
+            - name: source
+              type: git
+          outputs:
+            - name: image
+              type: image
         steps:
           - name: build-app-image-with-kaniko
             image: "gcr.io/kaniko-project/executor:latest"
             command:
               - /kaniko/executor
             args:
-              - --dockerfile=$(params.DOCKERFILE)
+              - --dockerfile=$(resources.inputs.source.path)/$(params.DOCKERFILE)
               - --destination=$(resources.outputs.image.url)
