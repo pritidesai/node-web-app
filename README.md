@@ -173,23 +173,6 @@ kubectl apply -n argocd -f https://raw.githubusercontent.com/tektoncd/catalog/ma
 
 ```
 
-
-### Create OCP Project 
-You need to create an OpenShift project called node-web-project or you will need to change all namespaces in the YAML File to match your project 
-
-```
-oc new-project node-web-project
-```
-
-### Allow Pipeline to access registry for build and deploy
-Your project will need the ability to publish and pull from the image repository.  
-
-```
-oc policy add-role-to-user registry-editor builder
-
-oc policy add-role-to-user registry-editor deployer
-```
-
 ### Update ArgoCD secret
 
 ![alt argo-secret](images/argosecret.png)
@@ -308,6 +291,9 @@ The screenshot below shows the parameters I entered.  You need to use your own f
 - PATH: deployment
 - AutoSync Disabled.  
 
+```shell
+argocd app create node-web-app --repo https://github.com/pritidesai/node-web-app --path deployment --dest-name docker-desktop --dest-namespace node-web-project
+```
 
 
 

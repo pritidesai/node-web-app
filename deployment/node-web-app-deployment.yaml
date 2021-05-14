@@ -19,4 +19,4 @@ spec:
       - name: node-web-app
         image: docker.io/pritidesai/web-node-app:latest
         ports:
-        - containerPort: 8080
+        - containerPort: 8082
