@@ -12,43 +12,43 @@ spec:
   - apiVersion: tekton.dev/v1alpha1
     kind: PipelineResource
     metadata:
-      name: node-web-app-source
+      name: node-web-app-source-$(uid)
       namespace: node-web-project
     spec:
       params:
       - name: url
-        value: $(params.git-repo-url)
+        value: $(tt.params.git-repo-url)
       - name: revision
-        value: $(params.git-revision)
+        value: $(tt.params.git-revision)
       - name: git-repo-name
-        value: $(params.git-repo-name)
+        value: $(tt.params.git-repo-name)
       type: git
   - apiVersion: tekton.dev/v1alpha1
     kind: PipelineResource
     metadata:
-      name: node-web-app-image
+      name: node-web-app-image-$(uid)
       namespace: node-web-project
     spec:
       params:
       - name: url
         value: 'docker.io/pritidesai/web-node-app:latest'
       type: image
-  - apiVersion: tekton.dev/v1alpha1
+  - apiVersion: tekton.dev/v1beta1
     kind: PipelineRun
     metadata:
       generateName: node-web-app-pipeline-run-
       namespace: node-web-project
     spec:
+      serviceAccountName: cdcon-app-builder
       pipelineRef:
         name: node-web-app-pipeline
       resources:
       - name: node-web-app-source
         resourceRef:
-          name: node-web-app-source
+          name: node-web-app-source-$(uid)
       - name: node-web-app-image
         resourceRef:
-          name: node-web-app-image
-      serviceAccountName: cdcon-app-builder
+          name: node-web-app-image-$(uid)
 ---
 
 apiVersion: triggers.tekton.dev/v1alpha1

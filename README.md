@@ -343,6 +343,15 @@ kubectl get svc -n node-web-project
 kubectl port-forward  svc/el-node-web-app-el -n node-web-project 8080
 ```
 
+```shell
+curl -v \
+-H 'X-GitHub-Event: push' \
+-H 'Content-Type: application/json' \
+-d '{"repository":{"url":  "https://github.com/pritidesai/node-web-app", "name": "node-web-app"}, "head_commit":{"id": "b20de767cf9799a23d8cb6bbd795c3c5e0b4b95a"}}' \
+http://localhost:8080
+
+```
+
 ### Make a code change and commit, look at build.   
 
 
