@@ -341,6 +341,7 @@ You will now need to configure 2 WebHooks.
 kubectl get eventlistener -n node-web-project
 kubectl get svc -n node-web-project
 kubectl port-forward  svc/el-node-web-app-el -n node-web-project 8080
+ngrok http 8080
 ```
 
 ```shell
